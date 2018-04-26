@@ -1,7 +1,11 @@
+import java.io.BufferedReader;
 import java.io.IOException;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+
+import javax.json.*;
+import java.io.StringReader;
 import java.util.Scanner;
 
 public class ScanWordsMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
@@ -14,12 +18,25 @@ public class ScanWordsMapper extends Mapper<LongWritable, Text, Text, LongWritab
         // The value is a line from the file.
 
         String line = value.toString();
-        Scanner scanner = new Scanner(line);
+        StringReader sr = new StringReader(line);
+        BufferedReader br = new BufferedReader(sr);
+        JsonReader reader = Json.createReader(br);
+        JsonObject tweet = reader.readObject();
+        JsonObject entities = tweet.getJsonObject("entities");
 
-        while (scanner.hasNext()) {
-            String word = scanner.next();
-            output.write(new Text(word), new LongWritable(1));
+        JsonArray urls = entities.getJsonArray("urls");
+
+        if(urls.size()>0){
+            for (int i=0; i<urls.size(); i++){
+                JsonObject url = urls.getJsonObject(i);
+                if(url.containsKey("expanded_url")){
+                    try{
+                        String urlText = url.get("expanded_url").toString();
+                        output.write(new Text(urlText), new LongWritable(1));
+                    }
+                    catch(Exception e){}
+                }
+            }
         }
-        scanner.close();
     }
 }
