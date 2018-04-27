@@ -16,7 +16,7 @@ public class W11Practical {
         // the total number of occurrences of that word in all the input files.
 
         if(args.length < 2) {
-            System.out.println("Usage: java -cp lib/*:bin WordCount <input_path> <output_path>");
+            System.out.println("Usage: java -cp \"lib/*:bin\" W11Practical <input_path> <output_directory>");
             System.exit(1);
         }
 
