@@ -55,9 +55,8 @@ public class ScanWordsMapper extends Mapper<LongWritable, Text, Text, LongWritab
             }
 
         }
-        //If an exception is thrown print the stacktrace
+        //Catch any exceptions thrown
         catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
